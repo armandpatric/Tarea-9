@@ -1,0 +1,293 @@
+---
+title: "AFDMD-111 - Estadística"
+subtitle: "Distribuciones muestrales"
+author: "Armando Patricio Piña Canul"
+date: "27/11/2023"
+output:
+  rmdformats::material:
+    highlight: kate
+    cards: false
+---
+
+
+```{r knitr_init, echo=FALSE, message=FALSE, warning=FALSE}
+
+```
+
+
+
+# Distribuciones muestrales de la media
+
+En esta práctica  abordaremos el tema de la distribución muestral de la media para diversas distribuciones de probabilidad y veremos como éstas se ajustan a una distribución de probabilidad normal o Gaussiana como la que se muestra en la ecuación,
+
+$$
+f_X(x) = \frac{1}{\sqrt{2\pi \sigma^2}} \mbox{e}^{-\frac{-(x-\mu)^2}{2\sigma^2}}
+$$
+
+Antes de iniciar, es necesario que nos familiaricemos con los siguientes comandos:
+
+```{r}
+#hist()
+#qqnorm()
+#qqline()
+```
+
+para ello podemos hacer `help(comando)` y obtener ayuda sobre cada uno de ellos. Ahora responda lo siguiente.
+
+1. ¿Cuál es la función del comando `qqnorm`?.
+2. ¿Cuál es la función del comando `qqline`? ¿y de `hist`?.
+
+
+## Aplicación de `qqnorm` y `qqline`
+
+Veamos ahora la aplicación de `qqnorm` y `qqline` en un ejemplo práctico. Supóngamos que queremos verificar si los datos se ajustan a una distribución normal, entonces para hacerlo, aplicamos,
+
+```{r}
+datos <- rnorm(100, mean = 10)
+qqnorm(datos)
+qqline(datos)
+```
+
+Actividad.
+
+1. Ahora cambie los nombres de los ejes $x$, $y$ y del título del gráfico anterior.
+
+```{r}
+datos <- rnorm(100, mean = 10)
+qqnorm(datos, xlab="(nombres cambiados)Cuantiles teóricos", ylab="(nombres cambiados)Cuantiles observados", main="CJGJ Gráfico Q-Q de Datos")
+qqline(datos)
+```
+
+
+2. ¿Qué sucede si la longitud de los datos es pequeña, digamos 10, 20 (modifique `rnorm`)? 
+
+\
+Cuando la longitud de los datos es pequeña, el gráfico Q-Q puede no proporcionar una evaluación precisa de la normalidad debido a la limitada cantidad de datos.
+```{r}
+datos <- rnorm(10, mean = 10)
+qqnorm(datos)
+qqline(datos)
+```
+
+
+3. ¿Qué sucede si los datos tienen varianza grande? ¿En qué parte del gráfico Q-Q se puede ver la varianza grande?
+
+\
+Significa que hay una gran dispersión o variabilidad en torno a la media, se puede observar que la varianza grande se concentra en los puntos X(-2,-2) y Y(8,9)
+\
+
+
+4. ¿Y si cambiamos la media?
+
+\
+Afectará la posición de los puntos en el gráfico Q-Q a lo largo del eje horizontal, pero no afectará directamente la varianza. La varianza sigue siendo una medida de dispersión de los datos, y cambios en la media afectarán principalmente la ubicación central de los datos en el gráfico. ejemplo una media de 30:
+
+```{r}
+datos <- rnorm(100, mean = 30)
+qqnorm(datos)
+qqline(datos)
+```
+
+
+5. ¿Qué sucede si los datos son exponenciales?
+
+\
+El gráfico reflejará las características particulares de la distribución exponencial en lugar de la forma diagonal que se esperaría con una distribución normal.
+\
+
+
+
+## Aplicación de `hist`
+
+El comando `hist` permite obtener el histograma de una serie de datos. El histograma, de igual forma que el gráfico Q-Q permite ajustar una serie de datos a una distribución para saber qué tanto se parece a la densidad teórica. Veamos cómo se aplica.
+
+
+
+```{r}
+datos <- rnorm(1000) #1000 muestras de una densidad normal
+hist(datos)
+
+```
+
+Podemos ver en el gráfico del histograma que éste es similar al gráfico de la densidad. El siguiente código lo muestra:
+
+
+```{r}
+datos <- rnorm(1000) # muestras normales con media 0 y var 1.
+teorica <- dnorm(seq(-4,4, length=100),mean = 0, sd = 1)
+hist(datos,freq = FALSE)
+lines(seq(-4,4, length=100),teorica, col="red")
+```
+
+Actividades.
+
+1. ¿Qué sucede si el número de muestras es pequeño (muestrelo mediante código y gráficas)?
+
+\
+La representación de la distribución de probabilidad de las muestras puede ser menos precisa y más susceptible a variaciones aleatorias.
+\
+```{r}
+datos <- rnorm(50) # muestras normales con media 0 y var 1.
+teorica <- dnorm(seq(-4,4, length=100),mean = 0, sd = 1)
+hist(datos,freq = FALSE)
+lines(seq(-4,4, length=100),teorica, col="blue")
+```
+
+
+
+2. ¿Y si cambio la varianza? ¿Tiene algún efecto la varianza grande? Mostrar con código.
+\
+Aumentar la varianza resulta en una mayor dispersión de los datos alrededor de la media. cambiar la varianza tiene un efecto claro en la forma y la dispersión de la distribución normal. A mayor varianza, la distribución será más ancha y los datos estarán más dispersos alrededor de la media.
+\
+```{r}
+datos_var_1 <- rnorm(1000, mean = 0, sd = 1)
+datos_var_4 <- rnorm(1000, mean = 0, sd = 2)  # Varianza = sd^2
+
+# Crear un histograma para varianza 1
+par(mfrow = c(1, 2))  # Configurar la disposición de los gráficos
+hist(datos_var_1, freq = FALSE, main = "Varianza = 1")
+curve(dnorm(x, mean = 0, sd = 1), add = TRUE, col = "blue")
+
+# Crear un histograma para varianza 4
+hist(datos_var_4, freq = FALSE, main = "Varianza = 4")
+curve(dnorm(x, mean = 0, sd = 2), add = TRUE, col = "blue")
+```
+
+
+3. ¿Cuáles crees que son las ventajas y desventajas del histograma y el gráfico Q-Q?
+
+\
+**Ventajas y desventajas del histograma:**
+
+Ventajas:
+
+- Visualización de la distribución: El histograma proporciona una representación visual directa de la distribución de los datos, permitiendo identificar patrones, modas y simetría.
+
+- Facilidad de interpretación: Es fácil de entender incluso para personas no familiarizadas con estadísticas. La altura de las barras refleja la frecuencia de ocurrencia de los valores.
+
+- Identificación de tendencias: Puede ayudar a identificar tendencias, agrupamientos y anomalías en los datos.
+
+- Versatilidad: Puede ajustarse fácilmente para cambiar el número de barras, su ancho y otras configuraciones para adaptarse a la situación.
+
+Desventajas:
+
+- Sensibilidad a la elección de intervalos: Los resultados pueden variar significativamente dependiendo de cómo se elijan los intervalos para construir el histograma.
+
+- Pérdida de información: Al agrupar datos en intervalos, se pierde información detallada sobre la variabilidad de los datos.
+
+- Dependencia del tamaño de la muestra: La apariencia del histograma puede variar según el tamaño de la muestra, y puede no revelar la verdadera forma de la distribución si la muestra es pequeña.
+
+
+
+**Ventajas y desventajas del gráfico Q-Q:**
+
+Ventajas:
+
+- Comparación con la distribución teórica: El gráfico Q-Q compara cuantiles observados con los cuantiles teóricos de una distribución específica, permitiendo evaluar si los datos siguen una distribución conocida.
+
+- Identificación de desviaciones de la normalidad: Es especialmente útil para evaluar la normalidad de los datos. Si los puntos se ajustan bien a la línea diagonal, los datos pueden aproximarse a una distribución normal.
+
+- Resistencia a la escala: El gráfico Q-Q es menos sensible a la escala de los datos en comparación con otros gráficos de probabilidad.
+
+Desventajas:
+
+- Requiere conocimiento previo: La interpretación del gráfico Q-Q puede requerir cierto conocimiento estadístico para comprender completamente los conceptos de cuantiles y distribuciones teóricas.
+
+- Limitado para evaluar formas específicas: Aunque es útil para evaluar la normalidad, puede no ser tan efectivo para identificar desviaciones de otras formas de distribución.
+
+- No revela información detallada: Al igual que el histograma, el gráfico Q-Q no revela información detallada sobre la variabilidad de los datos y se centra más en la forma general de la distribución.
+
+# Aplicación de la distribución muestral de la media.
+
+El término distribución muestral de la media se refiera a la distribución (ajustada mediante el gráfico Q-Q o el histograma) de la media muestral de un  conjunto de datos. Por ejemplo,
+
+```{r}
+N <- 10 # número de medias (es decir número de muestras)
+M <- 100 # número de la longitud de cada serie de datos
+medias <- numeric(N) # Vector que guardará las medias
+
+for(i in 1:N)
+{
+  datos <- rnorm(M)
+  medias[i] <- mean(datos)
+  
+}
+hist(medias)
+qqnorm(medias)
+qqline(medias)
+```
+
+
+Actividad
+
+1. ¿Qué sucede si hago N grande, por ejemplo 100, 1000, 10000?
+
+\
+Las medias se asemeja cada vez más a una distribución normal.
+
+```{r}
+N <- 100
+M <- 100
+medias <- numeric(N)
+for(i in 1:N)
+{
+  datos <- rnorm(M)
+  medias[i] <- mean(datos)
+}
+hist(medias)
+qqnorm(medias)
+qqline(medias)
+```
+
+
+```{r}
+N <- 1000
+M <- 100
+medias <- numeric(N)
+for(i in 1:N)
+{
+  datos <- rnorm(M)
+  medias[i] <- mean(datos)
+}
+hist(medias)
+qqnorm(medias)
+qqline(medias)
+```
+
+
+```{r}
+N <- 10000
+M <- 100
+medias <- numeric(N)
+for(i in 1:N)
+{
+  datos <- rnorm(M)
+  medias[i] <- mean(datos)
+}
+hist(medias)
+qqnorm(medias)
+qqline(medias)
+```
+
+
+2. ¿Qué sucede si en lugar de tomar una muestra Gaussiana, tomo una muestra exponencial con N muy grande?
+
+\
+Las medias de muestras exponenciales convergen hacia una distribución que se asemeja a una distribución normal, pero con colas más pesadas debido a las propiedades de la distribución exponencial.
+\
+
+```{r}
+N <- 1000  
+M <- 100
+medias_exp <- numeric(N)
+
+for (i in 1:N) {
+  datos_exp <- rexp(M)
+  medias_exp[i] <- mean(datos_exp)
+}
+par(mfrow = c(1, 2))
+hist(medias_exp, main = "Histograma de Medias (Exponencial)", col = "lightblue", xlab = "Medias")
+qqnorm(medias_exp, main = "Gráfico Q-Q de Medias (Exponencial)")
+qqline(medias_exp)
+```
+
